@@ -181,7 +181,7 @@ def run_script2():
                 id, text = reader.read()
                 print(f"ID: {id}\nText: {text}")
                 save_to_file(id)
-                sleep(5)
+                sleep(1)
         except KeyboardInterrupt:
             print("Program terminated")
             sys.exit()
