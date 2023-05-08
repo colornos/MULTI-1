@@ -10,7 +10,6 @@ import urllib.parse
 
 http = urllib3.PoolManager()
 
-
 class Plugin:
 
     def __init__(self):
