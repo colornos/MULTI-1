@@ -15,63 +15,6 @@ from mfrc522 import SimpleMFRC522
 
 GPIO.setwarnings(False)
 
-Char_temperature = '00002A1C-0000-1000-8000-00805f9b34fb'  # temperature data
-
-def sanitize_timestamp(timestamp):
-        retTS = time.time()
-        return retTS
-
-def decodetemperature(handle, values):
-        data = unpack('<BHxxxxxxI', bytes(values[0:14]))
-        retDict = {}
-        retDict["valid"] = (data[0] == 0x02)
-        retDict["temperature"] = data[1]
-        retDict["timestamp"] = sanitize_timestamp(data[2])
-        return retDict
-
-def processIndication(handle, values):
-        if handle == handle_temperature:
-            result = decodetemperature(handle, values)
-            if result not in temperaturedata:
-                log.info(str(result))
-                temperaturedata.append(result)
-            else:
-                log.info('Duplicate temperaturedata record')
-        else:
-            log.debug('Unhandled Indication encountered')
-
-def wait_for_device(devname):
-        found = False
-        while not found:
-            try:
-                found = adapter.filtered_scan(devname)
-            except pygatt.exceptions.BLEError:
-                adapter.reset()
-        return
-
-def connect_device(address):
-        device_connected = False
-        tries = 3
-        device = None
-        while not device_connected and tries > 0:
-            try:
-                device = adapter.connect(address, 8, addresstype)
-                device_connected = True
-            except pygatt.exceptions.NotConnectedError:
-                tries -= 1
-        return device
-
-def init_ble_mode():
-        p = subprocess.Popen("sudo btmgmt le on", stdout=subprocess.PIPE,
-                            shell=True)
-        (output, err) = p.communicate()
-        if not err:
-            log.info(output)
-            return True
-        else:
-            log.info(err)
-            return False
-
 class GPIOCleanup:
     def __enter__(self):
         return self
@@ -99,6 +42,62 @@ def run_script1():
             sys.exit()
 
 def run_script2():
+    Char_temperature = '00002A1C-0000-1000-8000-00805f9b34fb'  # temperature data
+
+    def sanitize_timestamp(timestamp):
+        retTS = time.time()
+        return retTS
+
+    def decodetemperature(handle, values):
+        data = unpack('<BHxxxxxxI', bytes(values[0:14]))
+        retDict = {}
+        retDict["valid"] = (data[0] == 0x02)
+        retDict["temperature"] = data[1]
+        retDict["timestamp"] = sanitize_timestamp(data[2])
+        return retDict
+
+    def processIndication(handle, values):
+        if handle == handle_temperature:
+            result = decodetemperature(handle, values)
+            if result not in temperaturedata:
+                log.info(str(result))
+                temperaturedata.append(result)
+            else:
+                log.info('Duplicate temperaturedata record')
+        else:
+            log.debug('Unhandled Indication encountered')
+
+    def wait_for_device(devname):
+        found = False
+        while not found:
+            try:
+                found = adapter.filtered_scan(devname)
+            except pygatt.exceptions.BLEError:
+                adapter.reset()
+        return
+
+    def connect_device(address):
+        device_connected = False
+        tries = 3
+        device = None
+        while not device_connected and tries > 0:
+            try:
+                device = adapter.connect(address, 8, addresstype)
+                device_connected = True
+            except pygatt.exceptions.NotConnectedError:
+                tries -= 1
+        return device
+
+    def init_ble_mode():
+        p = subprocess.Popen("sudo btmgmt le on", stdout=subprocess.PIPE,
+                            shell=True)
+        (output, err) = p.communicate()
+        if not err:
+            log.info(output)
+            return True
+        else:
+            log.info(err)
+            return False
 
     config = ConfigParser()
     config.read('MBP70.ini')
