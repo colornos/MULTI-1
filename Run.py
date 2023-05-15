@@ -357,12 +357,12 @@ def main():
     # Start both processes
     process1.start()
     process2.start()
-    process2.start()
+    process3.start()
 
     # Wait for both processes to finish
     process1.join()
     process2.join()
-    process2.join()
+    process3.join()
 
 if __name__ == "__main__":
     main()
