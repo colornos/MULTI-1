@@ -14,6 +14,8 @@ import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 
 GPIO.setwarnings(False)
+Char_temperature = '00002A1C-0000-1000-8000-00805f9b34fb'  # temperature data
+Char_heartrate = '00002A35-0000-1000-8000-00805f9b34fb'  # heartrate data
 
 class GPIOCleanup:
     def __enter__(self):
@@ -42,7 +44,6 @@ def run_script1():
             sys.exit()
 
 def run_script2():
-    Char_temperature = '00002A1C-0000-1000-8000-00805f9b34fb'  # temperature data
 
     def sanitize_timestamp(timestamp):
         retTS = time.time()
@@ -187,7 +188,6 @@ def run_script2():
                     log.error('Data received')
 
 def run_script3():
-    Char_heartrate = '00002A35-0000-1000-8000-00805f9b34fb'  # heartrate data
 
     def sanitize_timestamp(timestamp):
         retTS = time.time()
